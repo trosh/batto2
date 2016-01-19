@@ -17,7 +17,7 @@ for refin_filename in refins:
             if line[0] == '>':
                 words = line.split('|')
                 if query in words[2].lower():
-                    refout_filename = words[1] + ".faa"
+                    refout_filename = '.'.join(refin_filename.split('/')[-1].split('.')[:-1]) + ".extract.faa"
                     if os.path.isfile(refout_filename):
                         question = "overwrite "+refout_filename+" ? [Yn]"
                         answer = input(question).lower()

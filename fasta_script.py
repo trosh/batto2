@@ -1,3 +1,5 @@
+#!/usr/bin/env python3
+
 import subprocess
 from sys import argv
 
@@ -34,11 +36,12 @@ from itertools import combinations
 matrix = {}
 for i in combinations(cds, 2):
     proc = subprocess.Popen(
-            ['fasta', '-w', '80', '-b=1', '-mBB', '-s', 'BP62',
+            ['fasta36', '-w', '80', '-b=1', '-mBB', '-s', 'BP62',
              '-a', i[0], i[1]],
             stdout=subprocess.PIPE)
+    fasta_output = proc.communicate()[0].decode(encoding="utf-8").split('\n')
     identities = []
-    for line in proc.stdout:
+    for line in fasta_output:
         if 'Identities' in line:
             identities.append(int(line.strip().split(' ')[3][1:-3]))
     ind0 = fn_to_indices[i[0]]
@@ -47,8 +50,12 @@ for i in combinations(cds, 2):
         matrix[ind0][ind1] = max(identities)
     else:
         matrix[ind0] = {ind1 : max(identities)}
+    if ind1 in matrix:
+        matrix[ind1][ind0] = max(identities)
+    else:
+        matrix[ind1] = {ind0 : max(identities)}
 
 import json
-with open("distances.json") as distfile:
+with open("distances.json", "w") as distfile:
     json.dump({"D":matrix, "names":indices_to_realname}, distfile)
 
