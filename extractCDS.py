@@ -3,7 +3,7 @@
 from sys import argv
 
 if len(argv) < 3:
-    print("usage: extractCDS query reference_in [...] [> reference_out]")
+    print("usage: extractCDS query reference_in [...]")
     exit(1)
 
 with open(argv[1]) as queryfaa:
@@ -17,14 +17,15 @@ with open(argv[2]) as refinfaa:
             cdsname = line.split('|')[2]
             if query in cdsname.lower():
                 found = True
-                refout_filename = cdsname.split(' ')[0]
-                with open(refout_filename+".faa", "w") as refout:
-                    refout.write(line) # print cds header
+                refout_filename = cdsname.split(' ')[0] + ".faa"
+                print("writing to "+refout_filename)
+                with open(refout_filename, "w") as refoutfaa:
+                    refoutfaa.write(line) # print cds header
+                    # keep on printing lines until next cds
+                    while True:
+                        line = refinfaa.readline()
+                        if line[0] == '>':
+                            break
+                        refoutfaa.write(line)
                 break
-    if found:
-        with open(refout_filename+".faa", "a") as refout:
-            for line in refinfaa: # keep on printing lines until next cds
-                if line[0] == '>':
-                    break
-                print(line, end='')
 
