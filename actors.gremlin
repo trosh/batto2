@@ -1,0 +1,45 @@
+function getdirectors(actor) {
+    var directors_rep = g.V(actor)
+                         .In("name")
+                         .In("/film/performance/actor")
+                         .In("/film/film/starring")
+                         .Out("/film/film/directed_by")
+                         .Out("name")
+                         .As("name")
+                         .TagArray()
+    var directors = {}
+    for (d in directors_rep) {
+        directors[directors_rep[d].name] = true
+    }
+    return directors
+}
+
+var actors_rep = g.V()
+                  .Out("/film/performance/actor")
+                  .Out("name")
+                  .As("name")
+                  .TagArray()
+
+var actors = {}
+
+for (a in actors_rep) {
+    actors[actors_rep[a].name] = true
+}
+
+var actors_cpt = 0
+var directors_per_actor_sum = 0
+
+for (actor in actors) {
+    var directors = getdirectors(actor)
+    for (director in directors) {
+        directors_per_actor_sum += 1
+    }
+    actors_cpt += 1
+}
+
+g.Emit({
+    "number of actors"
+    : actors_cpt,
+    "average number of directors per actor"
+    : directors_per_actor_sum/actors_cpt
+})
