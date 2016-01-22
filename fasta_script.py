@@ -43,17 +43,17 @@ for i in combinations(cds, 2):
     identities = []
     for line in fasta_output:
         if 'Identities' in line:
-            identities.append(int(line.strip().split(' ')[3][1:-3]))
+            identities.append(100-int(line.strip().split(' ')[3][1:-3]))
     ind0 = fn_to_indices[i[0]]
     ind1 = fn_to_indices[i[1]]
     if ind0 in matrix:
-        matrix[ind0][ind1] = max(identities)
+        matrix[ind0][ind1] = min(identities)
     else:
-        matrix[ind0] = {ind1 : max(identities)}
+        matrix[ind0] = {ind1 : min(identities)}
     if ind1 in matrix:
-        matrix[ind1][ind0] = max(identities)
+        matrix[ind1][ind0] = min(identities)
     else:
-        matrix[ind1] = {ind0 : max(identities)}
+        matrix[ind1] = {ind0 : min(identities)}
 
 import json
 with open("distances.json", "w") as distfile:
