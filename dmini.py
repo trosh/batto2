@@ -53,11 +53,11 @@ def getstring(k, otherk):
         return "(%s,%s):%f" % \
             (getstring(child0, child1),
              getstring(child1, child0),
-             abs(D[k][otherk] - D[child0][child1]))
+             D[k][otherk] - D[child0][child1])
     else: # is real object
         name = names[str(k)]
         name = name[:name.find(",")]
-        return "%s:%f" % (name, abs(D[k][otherk]))
+        return "%s:%f" % (name, D[k][otherk])
 
 print("(%s,%s);" % \
       (getstring(active[0], active[1]),
